@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <title>Syntax, Componets, Properties, State, Events</title>
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+        <link href="lib/prism.css" rel="stylesheet" />
+        <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
+        <script src="lib/lodash.min.js"></script>
+        <script src="lib/react.js"></script>
+        <script src="lib/prism.js"></script>
+        <script src="lib/JSXTransformer.js"></script>
+        <script src="lib/sourceview.js"></script>
+        <script type="text/jsx" id="useMessageSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              render: function() {
+                  return <h3>{this.props.children}</h3>;
+              }
+          });
+
+          React.renderComponent(
+            <UberTag>Hello World</UberTag>,
+            document.getElementById('useMessage')
+          );
+        </script>
+        <script type="text/jsx" id="ajaxSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              //document that we take a prefix property, validates.
+              //
+              propTypes: {
+                  prefix: React.PropTypes.renderable
+              },
+              getDefaultProps: function() {
+                  return {
+                      prefix: "Hello"
+                  }
+              },
+              render: function() {
+                  return <p>
+                          <span>{this.props.prefix} </span>
+                          {this.props.children}
+                         </p>;
+              }
+          });
+          React.renderComponent(
+            <UberTag prefix="Greetings">John Smith</UberTag>,
+            document.getElementById('ajax')
+          );
+        </script>
+        <script type="text/jsx" id="routesSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              getInitialState: function() {
+                  return {
+                      clicks: this.props.clicks || 0
+                  };
+              },
+              increment: function() {
+                  this.setState({clicks: this.state.clicks + 1});
+              },
+              render: function() {
+                  return <div>
+                          <button onClick={this.increment}>{this.props.children}</button>
+                          {this.state.clicks ? <span>Number of clicks: {this.state.clicks} </span> : null}
+                         </div>;
+              }
+          });
+
+          React.renderComponent(
+            <UberTag clicks={-1}>Hello World</UberTag>,
+            document.getElementById('routes')
+          );
+        </script>
+    </head>
+    <body>
+        <section class="container">
+            <h1>Messages</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Use channels to send messages to other components and systems</li>
+                        <li>Subscribe to a topic on a channel to be notified of events</li>
+                        <li>Your component is an Actor</li>
+                    </ul>
+                    <div class="result" id="useMessage"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="useMessageSource"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Ajax</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Ajax requests are just another message</li>
+                    </ul>
+                    <div class="result" id="ajax"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="ajaxSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Routes</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>A component can act as a view controller</li>
+                        <li>Tree structure allows the current state to be presented as a url</li>
+                    </ul>
+                    <div class="result" id="routes"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="routesSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

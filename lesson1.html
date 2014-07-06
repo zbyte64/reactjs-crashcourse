@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <title>Syntax, Componets, Properties, State, Events</title>
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+        <link href="lib/prism.css" rel="stylesheet" />
+        <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
+        <script src="lib/lodash.min.js"></script>
+        <script src="lib/react.js"></script>
+        <script src="lib/prism.js"></script>
+        <script src="lib/JSXTransformer.js"></script>
+        <script src="lib/sourceview.js"></script>
+        <script type="text/plain" id="jsxSyntaxSource">
+          /** @jsx React.DOM */
+          <tagname property=value>children</tagname>
+        </script>
+        <script type="text/plain" id="jsxTanslatedSyntaxSource">
+          React.DOM.tagname(properties, children)
+        </script>
+        <script type="text/plain" id="defineTagSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({});
+          var uberInstance = <UberTag/>;
+        </script>
+        <script type="text/jsx" id="defineRenderSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              render: function() {
+                  return <h3>{this.props.children}</h3>;
+              }
+          });
+
+          React.renderComponent(
+            <UberTag>Hello World</UberTag>,
+            document.getElementById('defineRender')
+          );
+        </script>
+        <script type="text/jsx" id="definePropsSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              //document that we take a prefix property, validates.
+              //
+              propTypes: {
+                  prefix: React.PropTypes.renderable
+              },
+              getDefaultProps: function() {
+                  return {
+                      prefix: "Hello"
+                  }
+              },
+              render: function() {
+                  return <p>
+                          <span>{this.props.prefix} </span>
+                          {this.props.children}
+                         </p>;
+              }
+          });
+          React.renderComponent(
+            <UberTag prefix="Greetings">John Smith</UberTag>,
+            document.getElementById('defineProps')
+          );
+        </script>
+        <script type="text/jsx" id="defineClickHandlerSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              getInitialState: function() {
+                  return {
+                      clicks: this.props.clicks || 0
+                  };
+              },
+              increment: function() {
+                  this.setState({clicks: this.state.clicks + 1});
+              },
+              render: function() {
+                  return <div>
+                          <button onClick={this.increment}>{this.props.children}</button>
+                          {this.state.clicks ? <span>Number of clicks: {this.state.clicks} </span> : null}
+                         </div>;
+              }
+          });
+
+          React.renderComponent(
+            <UberTag clicks={-1}>Hello World</UberTag>,
+            document.getElementById('defineClickHandler')
+          );
+        </script>
+    </head>
+    <body>
+        <section class="container">
+            <h1>JSX Syntax</h1>
+            <p>
+                JSX extends javascript to support embedding xml tags and compiles to javascript.
+            </p>
+            <div class="row">
+                <div class="col-sm-6">
+                    <span>JSX:</span>
+                    <div class="sourceCode" data-source="jsxSyntaxSource"></div>
+                </div>
+                <div class="col-sm-6">
+                    <span>Transpiled Javascript</span>
+                    <div class="sourceCode" data-source="jsxTanslatedSyntaxSource"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Component</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Defining a component allows you to use a variable as a JSX tag.</li>
+                        <li>Components are structured like HTML by having children and properties</li>
+                        <li>A component is an Actor that receives messages, updates state, and sends messages</li>
+                    </ul>
+
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="defineTagSource"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Render</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>The "render" method returns a virtual DOM</li>
+                        <li>Returned virtual DOM must have one root element or be null to render nothing</li>
+                        <li>Brackets ("{}") are used to evaluate javascript within the tags.</li>
+                    </ul>
+                    <div class="result" id="defineRender"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="defineRenderSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Properties</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Attributes passed in become a dictionary call "props"</li>
+                        <li>Contents inside the tag are passed in as the "children" property</li>
+                        <li>Define <a href="https://facebook.github.io/react/docs/reusable-components.html">propTypes</a></li>
+                    </ul>
+                    <div class="result" id="defineProps"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="definePropsSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>State</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>We can bind event handlers as properties</li>
+                        <li>React.js DOM elements support most HTML5 <a href="https://facebook.github.io/react/docs/events.html">events</a> </li>
+                        <li>Components have state which can be updated</li>
+                        <li>Use "setState" to modify state and trigger an update</li>
+                        <li>Use the ternary operator "condition ? trueval : falseval" to render conditionals in the DOM</li>
+                    </ul>
+                    <div class="result" id="defineClickHandler"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="defineClickHandlerSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

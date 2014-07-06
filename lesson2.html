@@ -1,0 +1,253 @@
+<html>
+    <head>
+        <title>Lists, Refs, Bind Callbacks, LifeCycle &amp; 3rd party integration</title>
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+        <link href="lib/prism.css" rel="stylesheet" />
+        <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
+        <script src="lib/lodash.min.js"></script>
+        <script src="lib/react.js"></script>
+        <script src="lib/prism.js"></script>
+        <script src="lib/JSXTransformer.js"></script>
+        <script id="sourceView">
+var SourceCode = React.createClass({
+  //define our prop/attribute types
+  propTypes: {
+    sourceId: React.PropTypes.string,
+    language: React.PropTypes.string,
+    liveEdit: React.PropTypes.bool
+  },
+  getDefaultProps: function() {
+    return {
+      language: "jsx"
+    }
+  },
+  getInitialState: function() {
+    return {
+      source: document.getElementById(this.props.sourceId).innerHTML
+    };
+  },
+  //refresh Prism on state change
+  componentDidMount: function() {
+    Prism.highlightElement(this.refs.source.getDOMNode());
+  },
+  componentDidUpdate: function() {
+    Prism.highlightElement(this.refs.source.getDOMNode());
+  },
+  refreshCode: function() {
+    if (!this.props.liveEdit) return;
+    var code = this.refs.source.getDOMNode().innerText;
+    try {
+      var result = JSXTransformer.transform(code)
+      var jscode = result['code']
+      eval(jscode)
+    } catch(e) {
+      console.log("JSX compile error:", e)
+      return
+    }
+
+  },
+  render: function() {
+    return React.DOM.pre({},
+      React.DOM.code({
+        onBlur: this.refreshCode,
+        onInput: this.refreshCode,
+        contentEditable: this.props.liveEdit,
+        className: "language-"+this.props.language,
+        ref: "source"}, this.state.source));
+  }
+});
+window.SourceCode = SourceCode;
+
+(function(d, w){
+  window.addEventListener("load", function() {
+    //Register our own jsx language
+    Prism.languages.jsx = _.merge({}, Prism.languages.javascript, Prism.languages.markup);
+
+    //mount SourceCode for each element with class of sourceCode
+    _.each(d.querySelectorAll(".sourceCode"), function(el) {
+      React.renderComponent(SourceCode({sourceId: el.dataset.source,
+                                        language: el.dataset.language,
+                                        liveEdit: el.dataset.edit ? true : false}),
+                            el);
+    }, false);
+  })
+}(document, window));
+        </script>
+        <script type="text/jsx" id="renderListSource">
+          /** @jsx React.DOM */
+          var Messages = React.createClass({
+              getInitialState: function() {
+                  return {
+                      items: this.props.value || []
+                  };
+              },
+              addItem: function(event) {
+                  //not contaminating the original state is desirable
+                  var newItems = this.state.items.slice(0);
+                  newItems.push("Hi again");
+                  this.setState({items: newItems});
+              },
+              render: function() {
+                  return <div>
+                      <ul>
+                      {/*use map to process each item and return an element*/}
+                            {_.map(this.state.items,  function(item, number) {
+                                return <li key={number}>{item}</li>
+                            })}
+                        </ul>
+                        <button onClick={this.addItem}>Add</button>
+                      </div>;
+              }
+          });
+
+          React.renderComponent(
+            <Messages value={['Hello World', 'Second item']}/>,
+            document.getElementById('renderList')
+          );
+        </script>
+        <script type="text/jsx" id="sendMessageSource">
+          /** @jsx React.DOM */
+          var MessageYourself = React.createClass({
+              getInitialState: function() {
+                  return {
+                      items: this.props.value || []
+                  };
+              },
+              sendMessage: function(event) {
+                  var newItems = this.state.items.slice(0);
+                  //use refs to access the state of a child element and get the value
+                  newItems.push(this.refs.message.state.value);
+                  this.refs.message.setState({value: ""})
+                  this.setState({items: newItems});
+              },
+              render: function() {
+                  return <div>
+                      <ul>
+                            {_.map(this.state.items,  function(item, number) {
+                                return <li key={number}>{item}</li>
+                            })}
+                        </ul>
+                        {/*defining ref to access later*/}
+                        <fieldset><input ref="message" type="text"/></fieldset>
+                        <button onClick={this.sendMessage}>Send</button>
+                      </div>;
+              }
+          });
+
+          React.renderComponent(
+            <MessageYourself value={['Hello World', 'Second item']}/>,
+            document.getElementById('sendMessage')
+          );
+        </script>
+        <script type="text/jsx" id="todoListSource">
+          /** @jsx React.DOM */
+          var TodoList = React.createClass({
+              getInitialState: function() {
+                  return {
+                      items: this.props.value || []
+                  };
+              },
+              add: function(event) {
+                  var newItems = this.state.items.slice(0);
+                  newItems.push(this.refs.newItem.state.value);
+                  this.refs.newItem.setState({value: ""})
+                  this.setState({items: newItems});
+              },
+              remove: function(number) {
+                  var newItems = _.clone(this.state.items)
+                  newItems.splice(number, 1);
+                  this.setState({items: newItems});
+              },
+              render: function() {
+                  //keep this object around since we will be rendering in an anonymous function
+                  var self = this;
+                  return <div>
+                      <ul>
+                            {_.map(this.state.items,  function(item, number) {
+                                return <li key={number}>
+                                {item}
+                                {/*bind callback to the index of this item*/}
+                                <button onClick={self.remove.bind(self, number)}>Remove</button>
+                                </li>
+                            })}
+                        </ul>
+                        <fieldset><input ref="newItem" type="text"/></fieldset>
+                        <button onClick={this.add}>Add</button>
+                      </div>;
+              }
+          });
+
+          React.renderComponent(
+            <TodoList value={['Invent something', '????']}/>,
+            document.getElementById('todoList')
+          );
+        </script>
+    </head>
+    <body>
+        <section class="container">
+            <h1>Rendering a List</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Use "map" to iterate over items and emit virtual DOM</li>
+                        <li>Specify "key" attribute to distinguish each item in the virtual DOM</li>
+                        <li>Construct the DOM in the order that it will be rendered</li>
+                        <li>Define other render methods to keep the main render function simple</li>
+                    </ul>
+                    <div class="result" id="renderList"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="renderListSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Using refs</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>Attribute "ref" triggers the component to be stored in "this.refs" with the associated value as the key</li>
+                        <li>Use ref to retrieve data and send messages to children</li>
+                    </ul>
+                    <div class="result" id="sendMessage"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="sendMessageSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Binding data to callbacks</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>function.bind(this, arg1, arg2, ...)</li>
+                        <li>embed callback data from the rendering cycle to the callback</li>
+                    </ul>
+                    <div class="result" id="todoList"></div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="todoListSource" data-edit="true"></div>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Lifecycle &amp; Integrations</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <p>Using Reactjs &amp; Prism we rendered the source code used for the samples.<p>
+                    <ul>
+                        <li>Component looks up source code with the given sourceId property</li>
+                        <li>Component renders source code in a code tag</li>
+                        <li>Uses life cycle messages to trigger Prism load</li>
+                        <li>On code change optionally re-evaluate the code</li>
+                        <li>Seperate routine mounts a component for each sourceCode instance</li>
+                    </ul>
+                </div>
+                <div class="col-sm-8">
+                    <div class="sourceCode" data-source="sourceView" data-language="javascript"></div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
