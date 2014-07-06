@@ -1,26 +1,77 @@
 <html>
     <head>
-        <title>Syntax, Componets, Properties, State, Events</title>
+        <title>Messages, Ajax &amp; Routes</title>
         <link href="lib/bootstrap.css" rel="stylesheet" />
         <link href="lib/prism.css" rel="stylesheet" />
         <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
         <script src="lib/lodash.min.js"></script>
+        <script src="lib/radio.min.js"></script>
         <script src="lib/react.js"></script>
         <script src="lib/prism.js"></script>
         <script src="lib/JSXTransformer.js"></script>
         <script src="lib/sourceview.js"></script>
         <script type="text/jsx" id="useMessageSource">
           /** @jsx React.DOM */
-          var UberTag = React.createClass({
+          var ChatWindow = React.createClass({
+              getInitialState: function() {
+                  return {
+                      messages: this.props.messages || []
+                  }
+              },
+              componentWillMount: function() {
+                  radio(this.props.channel + ".message.received").subscribe(this.receiveMessage);
+              },
+              componentWillUnmount: function() {
+                  radio(this.props.channel + ".message.received").unsubscribe(this.receiveMessage);
+              },
+              receiveMessage: function(message) {
+                  var messages = this.state.messages;
+                  messages.push(message);
+                  this.setState({messages: messages})
+              },
+              renderMessage: function(message) {
+                  return <li key={message.id}>{message.message}</li>
+              },
+              sendMessage: function(event) {
+                  var input = this.refs.input;
+                  radio(this.props.channel + ".message.send").broadcast({message: input.state.value});
+                  input.setState({value: ""});
+              },
               render: function() {
-                  return <h3>{this.props.children}</h3>;
+                  return <div>
+                      <h3>Chat Connection</h3>
+                      <ol>
+                        {_.map(this.state.messages, this.renderMessage)}
+                      </ol>
+                      <fieldset>
+                          <input ref="input" type="text"/>
+                          <button onClick={this.sendMessage}>Send</button>
+                      </fieldset>
+                    </div>;
               }
           });
 
+          var ChatConnection = function(channel) {
+              function send(msg) {
+                radio(channel + ".message.received").broadcast({
+                    message: msg,
+                    id: _.uniqueId()
+                });
+              }
+
+              radio(channel + ".message.send").subscribe(function(data) {
+                  send(data.message);
+              });
+
+              send("[Client] Connection established")
+          };
+
+
           React.renderComponent(
-            <UberTag>Hello World</UberTag>,
+            <ChatWindow channel="chat">Hello World</ChatWindow>,
             document.getElementById('useMessage')
           );
+          ChatConnection("chat")
         </script>
         <script type="text/jsx" id="ajaxSource">
           /** @jsx React.DOM */
@@ -85,7 +136,7 @@
                     <div class="result" id="useMessage"></div>
                 </div>
                 <div class="col-sm-8">
-                    <div class="sourceCode" data-source="useMessageSource"></div>
+                    <div class="sourceCode" data-source="useMessageSource" data-edit="true"></div>
                 </div>
             </div>
         </section>

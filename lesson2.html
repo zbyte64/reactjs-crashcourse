@@ -9,8 +9,31 @@
         <script src="lib/prism.js"></script>
         <script src="lib/JSXTransformer.js"></script>
         <script id="sourceView">
+function fixExtraIndent(content) {
+  function countspace(line) {
+    var r = line.match(/^\s*/);
+    if (!r) return 0;
+    return r[0].length;
+  }
+
+  var lines = content.split(/\n/);
+  var returnlines = []
+  var guttersize = null;
+  _.each(lines, function(line) {
+    if (guttersize == null) {
+      var gspace = countspace(line)
+      if (gspace == line.length) {
+        return;
+      } else {
+        guttersize = gspace;
+      }
+    }
+    returnlines.push(line.substr(guttersize));
+  });
+  return returnlines.join("\n");
+}
+
 var SourceCode = React.createClass({
-  //define our prop/attribute types
   propTypes: {
     sourceId: React.PropTypes.string,
     language: React.PropTypes.string,
@@ -23,10 +46,9 @@ var SourceCode = React.createClass({
   },
   getInitialState: function() {
     return {
-      source: document.getElementById(this.props.sourceId).innerHTML
+      source: fixExtraIndent(document.getElementById(this.props.sourceId).innerHTML)
     };
   },
-  //refresh Prism on state change
   componentDidMount: function() {
     Prism.highlightElement(this.refs.source.getDOMNode());
   },
@@ -34,8 +56,8 @@ var SourceCode = React.createClass({
     Prism.highlightElement(this.refs.source.getDOMNode());
   },
   refreshCode: function() {
-    if (!this.props.liveEdit) return;
     var code = this.refs.source.getDOMNode().innerText;
+    if (!code) return;
     try {
       var result = JSXTransformer.transform(code)
       var jscode = result['code']
@@ -56,14 +78,11 @@ var SourceCode = React.createClass({
         ref: "source"}, this.state.source));
   }
 });
-window.SourceCode = SourceCode;
 
 (function(d, w){
   window.addEventListener("load", function() {
-    //Register our own jsx language
     Prism.languages.jsx = _.merge({}, Prism.languages.javascript, Prism.languages.markup);
 
-    //mount SourceCode for each element with class of sourceCode
     _.each(d.querySelectorAll(".sourceCode"), function(el) {
       React.renderComponent(SourceCode({sourceId: el.dataset.source,
                                         language: el.dataset.language,
@@ -158,18 +177,17 @@ window.SourceCode = SourceCode;
                   newItems.splice(number, 1);
                   this.setState({items: newItems});
               },
+              renderItem: function(item, index) {
+                  return <li key={index}>
+                           {item}
+                           {/*bind callback to the index of this item*/}
+                           <button onClick={this.remove.bind(this, index)}>Remove</button>
+                         </li>
+              },
               render: function() {
-                  //keep this object around since we will be rendering in an anonymous function
-                  var self = this;
                   return <div>
                       <ul>
-                            {_.map(this.state.items,  function(item, number) {
-                                return <li key={number}>
-                                {item}
-                                {/*bind callback to the index of this item*/}
-                                <button onClick={self.remove.bind(self, number)}>Remove</button>
-                                </li>
-                            })}
+                            {_.map(this.state.items,  this.renderItem)}
                         </ul>
                         <fieldset><input ref="newItem" type="text"/></fieldset>
                         <button onClick={this.add}>Add</button>
@@ -192,7 +210,6 @@ window.SourceCode = SourceCode;
                         <li>Use "map" to iterate over items and emit virtual DOM</li>
                         <li>Specify "key" attribute to distinguish each item in the virtual DOM</li>
                         <li>Construct the DOM in the order that it will be rendered</li>
-                        <li>Define other render methods to keep the main render function simple</li>
                     </ul>
                     <div class="result" id="renderList"></div>
                 </div>
@@ -223,6 +240,7 @@ window.SourceCode = SourceCode;
                     <ul>
                         <li>function.bind(this, arg1, arg2, ...)</li>
                         <li>embed callback data from the rendering cycle to the callback</li>
+                        <li>Define other render methods to keep the main render function simple</li>
                     </ul>
                     <div class="result" id="todoList"></div>
                 </div>
