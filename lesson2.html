@@ -206,10 +206,18 @@ var SourceCode = React.createClass({
             <h1>Rendering a List</h1>
             <div class="row">
                 <div class="col-sm-4">
+                    <p>
+                        In this example we are using <a href="http://lodash.com/">lodash</a> to provide easy to use functions.
+                        Javascript's array prototype includes a map function which works almost identically.
+                        In the addItem method we clone "items" so that the original state remains unmodified.
+                        This particular example would not have an issue with modifying "items" in place
+                        but if we ever implement our own "componentShouldUpdate" then we run the risk of not knowing if our state was modified.
+                    </p>
                     <ul>
                         <li>Use "map" to iterate over items and emit virtual DOM</li>
                         <li>Specify "key" attribute to distinguish each item in the virtual DOM</li>
                         <li>Construct the DOM in the order that it will be rendered</li>
+                        <li>Try not to modify the original state by cloning</li>
                     </ul>
                     <div class="result" id="renderList"></div>
                 </div>
@@ -253,7 +261,11 @@ var SourceCode = React.createClass({
             <h1>Lifecycle &amp; Integrations</h1>
             <div class="row">
                 <div class="col-sm-4">
-                    <p>Using Reactjs &amp; Prism we rendered the source code used for the samples.<p>
+                    <p>
+                        Using Reactjs &amp; Prism we rendered the source code used for the examples.
+                        Components may define <a href="https://facebook.github.io/react/docs/component-specs.html">life cycle methods</a>
+                        to manage events.
+                    </p>
                     <ul>
                         <li>Component looks up source code with the given sourceId property</li>
                         <li>Component renders source code in a code tag</li>

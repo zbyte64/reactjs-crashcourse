@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Messages, Ajax &amp; Routes</title>
+        <title>Messages, Models &amp; Routes</title>
         <link href="lib/bootstrap.css" rel="stylesheet" />
         <link href="lib/prism.css" rel="stylesheet" />
         <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
@@ -12,7 +12,7 @@
         <script src="lib/sourceview.js"></script>
         <script type="text/jsx" id="useMessageSource">
           /** @jsx React.DOM */
-          var ChatWindow = React.createClass({
+          var ChatSession = React.createClass({
               getInitialState: function() {
                   return {
                       messages: this.props.messages || []
@@ -39,7 +39,7 @@
               },
               render: function() {
                   return <div>
-                      <h3>Chat Connection</h3>
+                      <h3>Chat Connection ({this.props.channel})</h3>
                       <ol>
                         {_.map(this.state.messages, this.renderMessage)}
                       </ol>
@@ -51,27 +51,34 @@
               }
           });
 
-          var ChatConnection = function(channel) {
-              function send(msg) {
+          var FuseSessionChats = function(channel1, channel2) {
+              function send(channel, msg) {
                 radio(channel + ".message.received").broadcast({
                     message: msg,
                     id: _.uniqueId()
                 });
               }
 
-              radio(channel + ".message.send").subscribe(function(data) {
-                  send(data.message);
+              radio(channel1 + ".message.send").subscribe(function(data) {
+                  send(channel2, "["+channel1+"]:"+data.message);
+              });
+              radio(channel2 + ".message.send").subscribe(function(data) {
+                  send(channel1, "["+channel2+"]:"+data.message);
               });
 
-              send("[Client] Connection established")
+              send(channel1, "[Client] Connection established");
+              send(channel2, "[Client] Connection established");
           };
 
 
           React.renderComponent(
-            <ChatWindow channel="chat">Hello World</ChatWindow>,
+            <div>
+                <ChatSession channel="chat1"/>
+                <ChatSession channel="chat2"/>
+            </div>,
             document.getElementById('useMessage')
           );
-          ChatConnection("chat")
+          FuseSessionChats("chat1", "chat2")
         </script>
         <script type="text/jsx" id="ajaxSource">
           /** @jsx React.DOM */
@@ -128,8 +135,14 @@
             <h1>Messages</h1>
             <div class="row">
                 <div class="col-sm-4">
+                    <p>
+                        Channels allow for asynchronous message passing between code routines.
+                        In this example we are using Radio which is a minimalist pub/sub library.
+                        Other libraries like Postal.js offer more features like topics, promise integration, and responses.
+                        Messages can even be sent to web workers or to an iframe.
+                    </p>
                     <ul>
-                        <li>Use channels to send messages to other components and systems</li>
+                        <li>Use channels (aka pub/sub) to send messages to other components and systems</li>
                         <li>Subscribe to a topic on a channel to be notified of events</li>
                         <li>Your component is an Actor</li>
                     </ul>
@@ -141,11 +154,11 @@
             </div>
         </section>
         <section class="container">
-            <h1>Ajax</h1>
+            <h1>Models</h1>
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
-                        <li>Ajax requests are just another message</li>
+                        <li>Bind to your model layer using messages</li>
                     </ul>
                     <div class="result" id="ajax"></div>
                 </div>
