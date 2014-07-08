@@ -80,31 +80,6 @@
           );
           FuseSessionChats("chat1", "chat2")
         </script>
-        <script type="text/jsx" id="ajaxSource">
-          /** @jsx React.DOM */
-          var UberTag = React.createClass({
-              //document that we take a prefix property, validates.
-              //
-              propTypes: {
-                  prefix: React.PropTypes.renderable
-              },
-              getDefaultProps: function() {
-                  return {
-                      prefix: "Hello"
-                  }
-              },
-              render: function() {
-                  return <p>
-                          <span>{this.props.prefix} </span>
-                          {this.props.children}
-                         </p>;
-              }
-          });
-          React.renderComponent(
-            <UberTag prefix="Greetings">John Smith</UberTag>,
-            document.getElementById('ajax')
-          );
-        </script>
         <script type="text/jsx" id="routesSource">
           /** @jsx React.DOM */
           var UberTag = React.createClass({
@@ -145,6 +120,8 @@
                         <li>Use channels (aka pub/sub) to send messages to other components and systems</li>
                         <li>Subscribe to a topic on a channel to be notified of events</li>
                         <li>Your component is an Actor</li>
+                        <li>Subscribe to topics in "componentWillMount"</li>
+                        <li>Unsubscribe from topics in "componentWillUnmount"</li>
                     </ul>
                     <div class="result" id="useMessage"></div>
                 </div>
@@ -154,16 +131,20 @@
             </div>
         </section>
         <section class="container">
-            <h1>Models</h1>
+            <h1>Ajax &amp; Model Layer</h1>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-12">
+                    <p> Due to time constraints and lack of good public cross origin APIs the example for this has been skipped </p>
+                    <p>
+                        If components are editing data on a server then it is recommended that you use a model layer.
+                        It is recommended that you use messages to integrate React.js with the model layer.
+                        React.js doesn't care what is being used for the model layer or if AJAX is directly called as long as updates are pushed through "setState".
+                    </p>
                     <ul>
+                        <li>Choose your data backend</li>
                         <li>Bind to your model layer using messages</li>
+                        <li>Ajax requests are messages made to the internet</li>
                     </ul>
-                    <div class="result" id="ajax"></div>
-                </div>
-                <div class="col-sm-8">
-                    <div class="sourceCode" data-source="ajaxSource" data-edit="true"></div>
                 </div>
             </div>
         </section>
