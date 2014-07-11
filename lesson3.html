@@ -1,15 +1,26 @@
 <html>
     <head>
-        <title>Messages, Models &amp; Routes</title>
+        <title>Messages &amp; Models</title>
         <link href="lib/bootstrap.css" rel="stylesheet" />
         <link href="lib/prism.css" rel="stylesheet" />
         <link href="lib/style.css" rel="stylesheet" type="text/css" media="all" />
         <script src="lib/lodash.min.js"></script>
-        <script src="lib/radio.min.js"></script>
+        <script src="lib/conduit.min.js"></script>
+        <script src="lib/postal.min.js"></script>
+        <script src="lib/postal.request-response.min.js"></script>
+        <script src="lib/q.js"></script>
         <script src="lib/react.js"></script>
         <script src="lib/prism.js"></script>
         <script src="lib/JSXTransformer.js"></script>
         <script src="lib/sourceview.js"></script>
+        <script>
+        postal.configuration.promise.createDeferred = function() {
+            return Q.defer();
+        };
+        postal.configuration.promise.getPromise = function(dfd) {
+            return dfd.promise;
+        };
+        </script>
         <script type="text/jsx" id="useMessageSource">
           /** @jsx React.DOM */
           var ChatSession = React.createClass({
@@ -19,10 +30,13 @@
                   }
               },
               componentWillMount: function() {
-                  radio(this.props.channel + ".message.received").subscribe(this.receiveMessage);
+                  this.sub = postal.subscribe({
+                      channel: this.props.channel,
+                      topic: "message.received",
+                      callback: this.receiveMessage});
               },
               componentWillUnmount: function() {
-                  radio(this.props.channel + ".message.received").unsubscribe(this.receiveMessage);
+                  this.sub.unsubscribe()
               },
               receiveMessage: function(message) {
                   var messages = this.state.messages;
@@ -34,7 +48,10 @@
               },
               sendMessage: function(event) {
                   var input = this.refs.input;
-                  radio(this.props.channel + ".message.send").broadcast({message: input.state.value});
+                  postal.publish({
+                      channel: this.props.channel,
+                      topic: "message.send",
+                      data: input.state.value});
                   input.setState({value: ""});
               },
               render: function() {
@@ -53,17 +70,29 @@
 
           var FuseSessionChats = function(channel1, channel2) {
               function send(channel, msg) {
-                radio(channel + ".message.received").broadcast({
-                    message: msg,
-                    id: _.uniqueId()
+                postal.publish({
+                    channel: channel,
+                    topic: "message.received",
+                    data: {
+                        message: msg,
+                        id: _.uniqueId()
+                    }
                 });
               }
 
-              radio(channel1 + ".message.send").subscribe(function(data) {
-                  send(channel2, "["+channel1+"]:"+data.message);
+              postal.subscribe({
+                  channel: channel1,
+                  topic: "message.send",
+                  callback: function(data) {
+                      send(channel2, "["+channel1+"]:"+data);
+                  }
               });
-              radio(channel2 + ".message.send").subscribe(function(data) {
-                  send(channel1, "["+channel2+"]:"+data.message);
+              postal.subscribe({
+                  channel: channel2,
+                  topic: "message.send",
+                  callback: function(data) {
+                      send(channel1, "["+channel2+"]:"+data);
+                  }
               });
 
               send(channel1, "[Client] Connection established");
@@ -80,28 +109,199 @@
           );
           FuseSessionChats("chat1", "chat2")
         </script>
-        <script type="text/jsx" id="routesSource">
+        <script type="text/jsx" id="playlistSource">
           /** @jsx React.DOM */
-          var UberTag = React.createClass({
+          var SongController = function(channel) {
+              var songs = {"pf": {title: 'Another Brick in the Wall', album: 'The Wall', artist: 'Pink Floyd', _id:"pf"}};
+
+              function notifyDetail(song) {
+                  channel.publish("instance."+song._id, song);
+              }
+
+              function notifyList() {
+                  channel.publish("list", _.values(songs));
+              }
+
+              function create(data, envelope) {
+                  data = data ? data : {};
+                  data._id = _.uniqueId();
+                  songs[data._id] = data;
+                  notifyDetail(data)
+                  notifyList()
+              }
+
+              function update(data, envelope) {
+                  var songId = envelope.topic.substr(7);
+                  data._id = songId;
+                  songs[songId] = data;
+                  notifyDetail(data);
+                  notifyList()
+              }
+
+              function patch(data, envelope) {
+                  var songId = envelope.topic.substr(6);
+                  var song = songs[songId];
+                  song = _.merge(song, data, {_id: songId});
+                  notifyDetail(song)
+                  notifyList()
+              }
+
+              function remove(data, envelope) {
+
+              }
+
+              //respond to CRUD operations
+              channel.subscribe("create", create);
+              channel.subscribe("update.#", update);
+              channel.subscribe("patch.#", patch);
+              channel.subscribe("delete.#", remove);
+
+              //response to data requests
+              channel.subscribe("list.get", function(data, envelope) {
+                  envelope.reply(_.values(songs));
+              });
+          };
+
+          var SubscriptionMixin = {
+            /*
+             * Tracks subscriptions and closes them on unmount
+             */
+            subscribe: function(channel, topic, f) {
+              //opens a guarded subscription. Return false to stop getting messages.
+              var sub;
+              function callback(data, envelope) {
+                try {
+                  if (f(data, envelope) === false) sub.unsubscribe();
+                } catch (e) {
+                  console.log("Error in subscription handler", channel, topic, f, e)
+                  console.log(e.stack)
+                }
+              }
+              if (_.isString(channel)) {
+                sub = postal.subscribe({
+                  channel: channel,
+                  topic: topic,
+                  callback: callback
+                });
+              } else {
+                sub = channel.subscribe(topic, callback);
+              }
+              this.registerSubscription(sub)
+            },
+            registerSubscription: function(sub) {
+              if (!this.subscriptions) this.subscriptions = [];
+              this.subscriptions.push(sub)
+            },
+            componentWillUnmount: function() {
+              _.each(this.subscriptions, function(sub) {
+                sub.unsubscribe()
+              });
+            }
+          };
+
+          var SongEntry = React.createClass({
+              mixins: [SubscriptionMixin],
+              getInitialState: function() {
+                  return {song: this.props.song}
+              },
+              componentWillMount: function() {
+                  this.subscribe(this.props.songChannel, "instance."+this.state.song._id, this.updateSong)
+              },
+              updateSong: function(data, envelope) {
+                  this.setState({song: data})
+              },
+              update: function(refName, event) {
+                  var patch = {};
+                  patch[refName] = event.target.value;
+                  this.props.songChannel.publish("patch."+this.state.song._id, patch);
+              },
+              render: function() {
+                  return (<div>
+                          <fieldset>
+                              <label>Title</label>
+                              <input value={this.state.song.title} ref="title" onChange={this.update.bind(this, "title")} type="text"/>
+                          </fieldset>
+                          <fieldset>
+                              <label>Album</label>
+                              <input value={this.state.song.album} ref="album" onChange={this.update.bind(this, "album")} type="text"/>
+                          </fieldset>
+                          <fieldset>
+                              <label>Artist</label>
+                              <input value={this.state.song.artist} ref="artist" onChange={this.update.bind(this, "artist")} type="text"/>
+                          </fieldset>
+                      </div>)
+              }
+          });
+
+          var SongPlayer = React.createClass({
               getInitialState: function() {
                   return {
-                      clicks: this.props.clicks || 0
+                      current_song: null
+                  }
+              },
+              componentWillMount: function() {
+                  this.playNext();
+              },
+              playNext: function() {
+                  var index = _.findIndex(this.props.songs, {_id: this.state.current_song});
+                  index += 1;
+                  if (index >= this.props.songs.length) index = 0;
+                  var song = this.props.songs[index]
+                  if (song) {
+                      this.setState({current_song: song._id});
+                  }
+                  _.delay(this.playNext.bind(this, null), 3000);
+              },
+              render: function() {
+                  var song = _.find(this.props.songs, {_id: this.state.current_song});
+                  return <div>
+                      <span key="nowplaying">Now Playing: </span>
+                      {song ? <span key="display">{song.title} - {song.album}</span> : null}
+                  </div>
+              }
+
+          });
+
+          var Playlist = React.createClass({
+              mixins: [SubscriptionMixin],
+              getInitialState: function() {
+                  return {
+                      songs: []
                   };
               },
-              increment: function() {
-                  this.setState({clicks: this.state.clicks + 1});
+              componentWillMount: function() {
+                  this.props.songChannel.request({
+                      topic: "list.get",
+                      data: {},
+                      timeout: 3000
+                  }).then(this.updateSongList);
+                  this.subscribe(this.props.songChannel, "list", this.updateSongList);
+              },
+              updateSongList: function(data, envelope) {
+                  this.setState({songs: data});
+              },
+              addEntry: function() {
+                  this.props.songChannel.publish("create", {});
+              },
+              renderSongEntry: function(song) {
+                  return <SongEntry song={song} key={song._id} songChannel={this.props.songChannel}/>
               },
               render: function() {
                   return <div>
-                          <button onClick={this.increment}>{this.props.children}</button>
-                          {this.state.clicks ? <span>Number of clicks: {this.state.clicks} </span> : null}
+                          <ul>
+                              {this.state.songs.map(this.renderSongEntry)}
+                          </ul>
+                          <button className="btn btn-success" onClick={this.addEntry}>Add</button>
+                          <SongPlayer songs={this.state.songs}/>
                          </div>;
               }
           });
 
+          var songChannel = postal.channel("mySongs")
+          SongController(songChannel);
           React.renderComponent(
-            <UberTag clicks={-1}>Hello World</UberTag>,
-            document.getElementById('routes')
+            <Playlist songChannel={songChannel}/>,
+            document.getElementById('playlist')
           );
         </script>
     </head>
@@ -112,8 +312,7 @@
                 <div class="col-sm-4">
                     <p>
                         Channels allow for asynchronous message passing between code routines.
-                        In this example we are using Radio which is a minimalist pub/sub library.
-                        Other libraries like Postal.js offer more features like topics, promise integration, and responses.
+                        In this example we are using Postal.js which is a pub/sub library.
                         Messages can even be sent to web workers or to an iframe.
                     </p>
                     <ul>
@@ -131,35 +330,26 @@
             </div>
         </section>
         <section class="container">
-            <h1>Ajax &amp; Model Layer</h1>
-            <div class="row">
-                <div class="col-sm-12">
-                    <p> Due to time constraints and lack of good public cross origin APIs the example for this has been skipped </p>
-                    <p>
-                        If components are editing data on a server then it is recommended that you use a model layer.
-                        It is recommended that you use messages to integrate React.js with the model layer.
-                        React.js doesn't care what is being used for the model layer or if AJAX is directly called as long as updates are pushed through "setState".
-                    </p>
-                    <ul>
-                        <li>Choose your data backend</li>
-                        <li>Bind to your model layer using messages</li>
-                        <li>Ajax requests are messages made to the internet</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        <section class="container">
-            <h1>Routes</h1>
+            <h1>Models</h1>
             <div class="row">
                 <div class="col-sm-4">
+                    <p>
+                        If components are editing data on a server then it is recommended that you use a model layer.
+                        React.js doesn't care what is being used for the model layer or if AJAX is directly called as long as updates are pushed through "setState".
+                        Messages allow for all your components to be notified of model changes.
+                        Postal.js offers promise integration and responses handling which we use for immediate data requests.
+                    </p>
                     <ul>
-                        <li>A component can act as a view controller</li>
-                        <li>Tree structure allows the current state to be presented as a url</li>
+                        <li>Choose your own data backend</li>
+                        <li>Bind to your model layer using messages or callbacks</li>
+                        <li>Ajax requests are messages made to the internet with a callback</li>
+                        <li>Use <a href="https://www.npmjs.org/package/backbone-react-component">backbone-react-component</a> for backbone integration</li>
+                        <li>Facebook has their own model layer for react called <a href="https://facebook.github.io/react/docs/flux-todo-list.html">flux</a></li>
                     </ul>
-                    <div class="result" id="routes"></div>
+                    <div class="result" id="playlist"></div>
                 </div>
                 <div class="col-sm-8">
-                    <div class="sourceCode" data-source="routesSource" data-edit="true"></div>
+                    <div class="sourceCode" data-source="playlistSource" data-edit="true"></div>
                 </div>
             </div>
         </section>
