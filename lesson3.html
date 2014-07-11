@@ -112,6 +112,10 @@
         <script type="text/jsx" id="playlistSource">
           /** @jsx React.DOM */
           var SongController = function(channel) {
+              //defines actions that can be done on our Song model/collection
+              //connects those actions to a postal.js channel
+
+              //initial data
               var songs = {"pf": {title: 'Another Brick in the Wall', album: 'The Wall', artist: 'Pink Floyd', _id:"pf"}};
 
               function notifyDetail(song) {
@@ -122,6 +126,7 @@
                   channel.publish("list", _.values(songs));
               }
 
+              //actual operations
               function create(data, envelope) {
                   data = data ? data : {};
                   data._id = _.uniqueId();
@@ -156,7 +161,7 @@
               channel.subscribe("patch.#", patch);
               channel.subscribe("delete.#", remove);
 
-              //response to data requests
+              //respond to data requests
               channel.subscribe("list.get", function(data, envelope) {
                   envelope.reply(_.values(songs));
               });
@@ -177,15 +182,7 @@
                   console.log(e.stack)
                 }
               }
-              if (_.isString(channel)) {
-                sub = postal.subscribe({
-                  channel: channel,
-                  topic: topic,
-                  callback: callback
-                });
-              } else {
-                sub = channel.subscribe(topic, callback);
-              }
+              sub = channel.subscribe(topic, callback);
               this.registerSubscription(sub)
             },
             registerSubscription: function(sub) {
@@ -196,6 +193,7 @@
               _.each(this.subscriptions, function(sub) {
                 sub.unsubscribe()
               });
+              this.subscriptions = [];
             }
           };
 
@@ -205,6 +203,7 @@
                   return {song: this.props.song}
               },
               componentWillMount: function() {
+                  //listen for updates on our song
                   this.subscribe(this.props.songChannel, "instance."+this.state.song._id, this.updateSong)
               },
               updateSong: function(data, envelope) {
@@ -234,6 +233,7 @@
           });
 
           var SongPlayer = React.createClass({
+              //"plays" through our list of songs
               getInitialState: function() {
                   return {
                       current_song: null
@@ -243,6 +243,7 @@
                   this.playNext();
               },
               playNext: function() {
+                  //find the next song to play and update our state
                   var index = _.findIndex(this.props.songs, {_id: this.state.current_song});
                   index += 1;
                   if (index >= this.props.songs.length) index = 0;
@@ -250,6 +251,7 @@
                   if (song) {
                       this.setState({current_song: song._id});
                   }
+                  //schedule this function when the song "ends"
                   _.delay(this.playNext.bind(this, null), 3000);
               },
               render: function() {
@@ -270,11 +272,14 @@
                   };
               },
               componentWillMount: function() {
+                  //request the list of songs
                   this.props.songChannel.request({
                       topic: "list.get",
                       data: {},
                       timeout: 3000
                   }).then(this.updateSongList);
+
+                  //listen for song list updates
                   this.subscribe(this.props.songChannel, "list", this.updateSongList);
               },
               updateSongList: function(data, envelope) {
@@ -347,6 +352,7 @@
                         <li>Simple applications may use Ajax calls direct from the component</li>
                         <li>Use <a href="https://www.npmjs.org/package/backbone-react-component">backbone-react-component</a> for backbone integration</li>
                         <li>Facebook has their own model layer for react called <a href="https://facebook.github.io/react/docs/flux-todo-list.html">flux</a></li>
+                        <li>Postal.js provides a <a href="https://github.com/postaljs/postal.request-response">Request-Response</a> library for putting requests over a channel</li>
                     </ul>
                     <div class="result" id="playlist"></div>
                 </div>
