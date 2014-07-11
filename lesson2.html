@@ -10,6 +10,7 @@
         <script src="lib/JSXTransformer.js"></script>
         <script id="sourceView">
 function fixExtraIndent(content) {
+  //removes extra padding on the left for source code
   function countspace(line) {
     var r = line.match(/^\s*/);
     if (!r) return 0;
@@ -110,7 +111,7 @@ var SourceCode = React.createClass({
                   return <div>
                       <ul>
                       {/*use map to process each item and return an element*/}
-                            {_.map(this.state.items,  function(item, number) {
+                            {this.state.items.map(function(item, number) {
                                 return <li key={number}>{item}</li>
                             })}
                         </ul>
@@ -142,7 +143,7 @@ var SourceCode = React.createClass({
               render: function() {
                   return <div>
                       <ul>
-                            {_.map(this.state.items,  function(item, number) {
+                            {this.state.items.map(function(item, number) {
                                 return <li key={number}>{item}</li>
                             })}
                         </ul>
@@ -172,7 +173,7 @@ var SourceCode = React.createClass({
                   this.refs.newItem.setState({value: ""})
                   this.setState({items: newItems});
               },
-              remove: function(number) {
+              remove: function(number, event) {
                   var newItems = _.clone(this.state.items)
                   newItems.splice(number, 1);
                   this.setState({items: newItems});
@@ -187,7 +188,7 @@ var SourceCode = React.createClass({
               render: function() {
                   return <div>
                       <ul>
-                            {_.map(this.state.items,  this.renderItem)}
+                            {this.state.items.map(this.renderItem)}
                         </ul>
                         <fieldset><input ref="newItem" type="text"/></fieldset>
                         <button onClick={this.add}>Add</button>
@@ -215,7 +216,7 @@ var SourceCode = React.createClass({
                     </p>
                     <ul>
                         <li>Use "map" to iterate over items and emit virtual DOM</li>
-                        <li>Specify "key" attribute to distinguish each item in the virtual DOM</li>
+                        <li>Specify "key" attribute to distinguish each list item in the virtual DOM</li>
                         <li>Construct the DOM in the order that it will be rendered</li>
                         <li>Try not to modify the original state by cloning</li>
                     </ul>
@@ -262,14 +263,14 @@ var SourceCode = React.createClass({
             <div class="row">
                 <div class="col-sm-4">
                     <p>
-                        Using Reactjs &amp; Prism we rendered the source code used for the examples.
-                        Components may define <a href="https://facebook.github.io/react/docs/component-specs.html">life cycle methods</a>
-                        to manage events.
+                        This example uses Reactjs &amp; Prism to render the source code used for rendering the source code examples.
+                        A component has a life cycle with explicit events and can define handlers for those events. By hooking into
+                        those lifecycle events we can trigger loading and updating 3rd party javascript tools like Prism or jQuery.
                     </p>
                     <ul>
                         <li>Component looks up source code with the given sourceId property</li>
                         <li>Component renders source code in a code tag</li>
-                        <li>Uses life cycle messages to trigger Prism load</li>
+                        <li>Uses <a href="https://facebook.github.io/react/docs/component-specs.html">life cycle events</a> to trigger Prism load</li>
                         <li>On code change optionally re-evaluate the code</li>
                         <li>Seperate routine mounts a component for each sourceCode instance</li>
                     </ul>

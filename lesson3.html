@@ -318,7 +318,7 @@
                     <ul>
                         <li>Use channels (aka pub/sub) to send messages to other components and systems</li>
                         <li>Subscribe to a topic on a channel to be notified of events</li>
-                        <li>Your component is an Actor</li>
+                        <li>Remember, your component is an Actor</li>
                         <li>Subscribe to topics in "componentWillMount"</li>
                         <li>Unsubscribe from topics in "componentWillUnmount"</li>
                     </ul>
@@ -341,8 +341,10 @@
                     </p>
                     <ul>
                         <li>Choose your own data backend</li>
-                        <li>Bind to your model layer using messages or callbacks</li>
-                        <li>Ajax requests are messages made to the internet with a callback</li>
+                        <li>Optionally define a Mixin to contain helpers for your model layer</li>
+                        <li>Bind to your model layer using messages or callbacks in componentWillMount</li>
+                        <li>Unbind from the model layer in the componentWillUnmount</li>
+                        <li>Simple applications may use Ajax calls direct from the component</li>
                         <li>Use <a href="https://www.npmjs.org/package/backbone-react-component">backbone-react-component</a> for backbone integration</li>
                         <li>Facebook has their own model layer for react called <a href="https://facebook.github.io/react/docs/flux-todo-list.html">flux</a></li>
                     </ul>

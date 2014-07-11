@@ -38,7 +38,6 @@
           /** @jsx React.DOM */
           var UberTag = React.createClass({
               //document that we take a prefix property, validates.
-              //
               propTypes: {
                   prefix: React.PropTypes.renderable
               },
@@ -67,7 +66,7 @@
                       clicks: this.props.clicks || 0
                   };
               },
-              increment: function() {
+              increment: function(event) {
                   this.setState({clicks: this.state.clicks + 1});
               },
               render: function() {
@@ -106,7 +105,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
-                        <li>Defining a component allows you to use a variable as a JSX tag.</li>
+                        <li>Defining a component allows you to use a variable as a JSX tag</li>
                         <li>Components are structured like HTML by having children and properties</li>
                         <li>A component is an Actor that receives messages, updates state, and sends messages</li>
                     </ul>
@@ -121,6 +120,11 @@
             <h1>Render</h1>
             <div class="row">
                 <div class="col-sm-4">
+                    <p>
+                        Render is called after the component's internal state changes.
+                        The virtual DOM is compared against the actual DOM to generate a DOM diff.
+                        This DOM diff is applied to the actual DOM to minimize redrawing.
+                    </p>
                     <ul>
                         <li>The "render" method returns a virtual DOM</li>
                         <li>Returned virtual DOM must have one root element or be null to render nothing</li>
@@ -154,9 +158,8 @@
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
-                        <li>We can bind event handlers as properties</li>
+                        <li>We can bind event handlers as properties, callbacks receive a synthetic event as the first argument</li>
                         <li>React.js DOM elements support most HTML5 <a href="https://facebook.github.io/react/docs/events.html">events</a> </li>
-                        <li>Components have state which can be updated</li>
                         <li>Use "setState" to modify state and trigger an update</li>
                         <li>Use the ternary operator "condition ? trueval : falseval" to render conditionals in the DOM</li>
                     </ul>
