@@ -57,7 +57,8 @@ var SourceCode = React.createClass({
     Prism.highlightElement(this.refs.source.getDOMNode());
   },
   refreshCode: function() {
-    var code = this.refs.source.getDOMNode().innerText;
+    var node = this.refs.source.getDOMNode(),
+        code = node.innerText || node.textContent;
     if (!code) return;
     try {
       var result = JSXTransformer.transform(code)
