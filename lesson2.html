@@ -209,8 +209,6 @@ var SourceCode = React.createClass({
             <div class="row">
                 <div class="col-sm-4">
                     <p>
-                        In this example we are using <a href="http://lodash.com/">lodash</a> to provide easy to use functions.
-                        Javascript's array prototype includes a map function which works almost identically.
                         In the addItem method we clone "items" so that the original state remains unmodified.
                         This particular example would not have an issue with modifying "items" in place
                         but if we ever implement our own "componentShouldUpdate" then we run the risk of not knowing if our state was modified.
