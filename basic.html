@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>Hello World</title>
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+        <script src="lib/react.js"></script>
+        <script src="lib/JSXTransformer.js"></script>
+        <script type="text/jsx" id="defineRenderSource">
+          /** @jsx React.DOM */
+          var UberTag = React.createClass({
+              render: function() {
+                  return <h3>{this.props.children}</h3>;
+              }
+          });
+
+          React.renderComponent(
+            <UberTag>Hello World</UberTag>,
+            document.getElementById('defineRender')
+          );
+        </script>
+
+    </head>
+    <body>
+        <section class="container">
+            <div class="result" id="defineRender"></div>
+        </section>
+    </body>
+</html>
