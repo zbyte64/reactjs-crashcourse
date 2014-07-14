@@ -85,10 +85,47 @@
     </head>
     <body>
         <section class="container">
-            <h1>JSX Syntax</h1>
-            <p>
-                JSX extends javascript to support embedding xml tags and compiles to javascript.
-            </p>
+            <h1>Application as a hierarchy of components</h1>
+            <div class="row">
+                <div class="col-sm-12">
+                <p>
+                    A web application is presented by defining a structural DOM to be rendered.
+                    When the state of the application changes, perhaps due to a user event, the DOM
+                    structure changes to represent the new state. React.js divides up the DOM rendering
+                    and interactivity into components with each component being responsible for its own
+                    state and presentation.
+                </p>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Components as Actors</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul>
+                        <li>A component is dependent on three state containers: context, props, state</li>
+                        <li>Components render a Virtual DOM that is applied to the UI</li>
+                        <li>Whenever a component's state container changes it is rerendered</li>
+                        <li>Messages may be received and trigger state changes</li>
+                        <li>Components may have callbacks set in context or props</li>
+                    </ul>
+
+                </div>
+                <div class="col-sm-8">
+                    <img style="width: 100%;" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+Cjxzdmcgd2lkdGg9IjkxMCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8IS0tIENyZWF0ZWQgd2l0aCBNZXRob2QgRHJhdyAtIGh0dHA6Ly9naXRodWIuY29tL2R1b3BpeGVsL01ldGhvZC1EcmF3LyAtLT4KIDxnPgogIDx0aXRsZT5iYWNrZ3JvdW5kPC90aXRsZT4KICA8cmVjdCBmaWxsPSIjZmZmIiBpZD0iY2FudmFzX2JhY2tncm91bmQiIGhlaWdodD0iNDAyIiB3aWR0aD0iOTEyIiB5PSItMSIgeD0iLTEiLz4KICA8ZyBkaXNwbGF5PSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgeT0iMCIgeD0iMCIgaGVpZ2h0PSIxMDAlIiB3aWR0aD0iMTAwJSIgaWQ9ImNhbnZhc0dyaWQiPgogICA8cmVjdCBmaWxsPSJ1cmwoI2dyaWRwYXR0ZXJuKSIgc3Ryb2tlLXdpZHRoPSIwIiB5PSIwIiB4PSIwIiBoZWlnaHQ9IjEwMCUiIHdpZHRoPSIxMDAlIi8+CiAgPC9nPgogPC9nPgogPGc+CiAgPHRpdGxlPkxheWVyIDE8L3RpdGxlPgogIDxyZWN0IHN0cm9rZT0iIzAwMCIgaWQ9InN2Z18yIiBoZWlnaHQ9IjI2Mi4wMDAwMDMiIHdpZHRoPSIxODMuMDAwMDA2IiB5PSI1NC40OTk5OTciIHg9IjE5OC45OTk5OTkiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSIjZmZmIi8+CiAgPGVsbGlwc2Ugcnk9IjM3LjUiIHJ4PSI2OCIgaWQ9InN2Z18zIiBjeT0iMTA0IiBjeD0iMjkxIiBmaWxsLW9wYWNpdHk9Im51bGwiIHN0cm9rZS1vcGFjaXR5PSJudWxsIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjZmZmIi8+CiAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9ImxlZnQiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBpZD0ic3ZnXzQiIHk9IjExMS41IiB4PSIyNTMiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIj5jb250ZXh0PC90ZXh0PgogIDxlbGxpcHNlIHJ5PSIzNS41IiByeD0iNjUuNSIgaWQ9InN2Z181IiBjeT0iMTk0IiBjeD0iMjkwLjUiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiMwMDAiIGZpbGw9IiNmZmYiLz4KICA8dGV4dCB4bWw6c3BhY2U9InByZXNlcnZlIiB0ZXh0LWFuY2hvcj0ibGVmdCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGlkPSJzdmdfNiIgeT0iMjAyLjUiIHg9IjI2MSIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiPnByb3BzPC90ZXh0PgogIDxlbGxpcHNlIHJ5PSIzMC41IiByeD0iNjMuNSIgaWQ9InN2Z183IiBjeT0iMjczIiBjeD0iMjkyLjUiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2U9IiMwMDAiIGZpbGw9IiNmZmYiLz4KICA8dGV4dCB4bWw6c3BhY2U9InByZXNlcnZlIiB0ZXh0LWFuY2hvcj0ibGVmdCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGlkPSJzdmdfOCIgeT0iMjg1LjUiIHg9IjI2NSIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiPnN0YXRlPC90ZXh0PgogIDx0ZXh0IHhtbDpzcGFjZT0icHJlc2VydmUiIHRleHQtYW5jaG9yPSJsZWZ0IiBmb250LWZhbWlseT0iSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgaWQ9InN2Z185IiB5PSIxMTIuNSIgeD0iNjQiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIj5HbG9iYWw8L3RleHQ+CiAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9ImxlZnQiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBpZD0ic3ZnXzEwIiB5PSIxOTcuNSIgeD0iNTkiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIj5QYXJlbnQ8L3RleHQ+CiAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9ImxlZnQiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBpZD0ic3ZnXzExIiB5PSIyODMuNSIgeD0iOCIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiPkNvbXBvbmVudDwvdGV4dD4KICA8dGV4dCB4bWw6c3BhY2U9InByZXNlcnZlIiB0ZXh0LWFuY2hvcj0ibGVmdCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGlkPSJzdmdfMTUiIHk9IjQ5LjUiIHg9IjI2NiIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiPiJ0aGlzIjwvdGV4dD4KICA8dGV4dCB4bWw6c3BhY2U9InByZXNlcnZlIiB0ZXh0LWFuY2hvcj0ibGVmdCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSwgQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGlkPSJzdmdfMTYiIHk9IjIwMi41IiB4PSI2NzgiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIj5WaXJ0dWFsIERPTTwvdGV4dD4KICA8cGF0aCBpZD0ic3ZnXzE3IiBkPSJtMzkwLjYzMzU3NSwyMDguODA5MjM1bDguODc5ODgzLC04Ljk3MzE0NWwtMTcuMTY2NzQ4LDBsLTE3LjE2Njc0OCwwbDAsLTUuNTU0NDI4bDAsLTUuNTU0NDI4bDE2Ljk2ODUwNiwwYzkuMzM0NDczLDAgMTYuOTcwMjE1LC0wLjI4MTEyOCAxNi45NzAyMTUsLTAuNjI1MzY2YzAsLTAuMzQ0MjM4IC0zLjcxNTMzMiwtNC4zODE4NjYgLTguMjU2MTA0LC04Ljk3MzE0NWwtOC4yNTYxMDQsLTguMzQ3MDYxbDcuNjMwNjE1LDBsNy42MzIzMjQsMGwxMS42NTUyNzMsMTEuNzYxNDc1bDExLjY1NTI3MywxMS43NjA3NTdsLTExLjY3NzQ5LDExLjczOTI0M2wtMTEuNjc3NDksMTEuNzM4NTI1bC04LjAzNTY0NSwwbC04LjAzMzkzNiwwbDguODc4MTc0LC04Ljk3MjQyN2wwLDB6IiBmaWxsLW9wYWNpdHk9Im51bGwiIHN0cm9rZS1vcGFjaXR5PSJudWxsIiBzdHJva2Utd2lkdGg9IjAiIHN0cm9rZT0iIzAwMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxwYXRoIGlkPSJzdmdfMTgiIGQ9Im0xNzkuNjMzNTc1LDExOS44MDkyMzVsOC44Nzk4ODMsLTguOTczMTQ1bC0xNy4xNjY3NDgsMGwtMTcuMTY2NzQ4LDBsMCwtNS41NTQ0MjhsMCwtNS41NTQ0MjhsMTYuOTY4NTA2LDBjOS4zMzQ0NzMsMCAxNi45NzAyMTUsLTAuMjgxMTI4IDE2Ljk3MDIxNSwtMC42MjUzNjZjMCwtMC4zNDQyMzggLTMuNzE1MzMyLC00LjM4MTg2NiAtOC4yNTYxMDQsLTguOTczMTQ1bC04LjI1NjEwNCwtOC4zNDcwNjFsNy42MzA2MTUsMGw3LjYzMjMyNCwwbDExLjY1NTI3MywxMS43NjE0NzVsMTEuNjU1MjczLDExLjc2MDc1N2wtMTEuNjc3NDksMTEuNzM5MjQzbC0xMS42Nzc0OSwxMS43Mzg1MjVsLTguMDM1NjQ1LDBsLTguMDMzOTM2LDBsOC44NzgxNzQsLTguOTcyNDI3bDAsMHoiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHBhdGggaWQ9InN2Z18xOSIgZD0ibTE4MC42MzM1NzUsMjA3LjgwOTIzNWw4Ljg3OTg4MywtOC45NzMxNDVsLTE3LjE2Njc0OCwwbC0xNy4xNjY3NDgsMGwwLC01LjU1NDQyOGwwLC01LjU1NDQyOGwxNi45Njg1MDYsMGM5LjMzNDQ3MywwIDE2Ljk3MDIxNSwtMC4yODExMjggMTYuOTcwMjE1LC0wLjYyNTM2NmMwLC0wLjM0NDIzOCAtMy43MTUzMzIsLTQuMzgxODY2IC04LjI1NjEwNCwtOC45NzMxNDVsLTguMjU2MTA0LC04LjM0NzA2MWw3LjYzMDYxNSwwbDcuNjMyMzI0LDBsMTEuNjU1MjczLDExLjc2MTQ3NWwxMS42NTUyNzMsMTEuNzYwNzU3bC0xMS42Nzc0OSwxMS43MzkyNDNsLTExLjY3NzQ5LDExLjczODUyNWwtOC4wMzU2NDUsMGwtOC4wMzM5MzYsMGw4Ljg3ODE3NCwtOC45NzI0MjdsMCwweiIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiLz4KICA8cGF0aCBpZD0ic3ZnXzIwIiBkPSJtMTc2LjYzMzU3NSwyODYuODA5MjM1bDguODc5ODgzLC04Ljk3MzE0NWwtMTcuMTY2NzQ4LDBsLTE3LjE2Njc0OCwwbDAsLTUuNTU0NDEzbDAsLTUuNTU0NDQzbDE2Ljk2ODUwNiwwYzkuMzM0NDczLDAgMTYuOTcwMjE1LC0wLjI4MTEyOCAxNi45NzAyMTUsLTAuNjI1MzY2YzAsLTAuMzQ0MjM4IC0zLjcxNTMzMiwtNC4zODE4NjYgLTguMjU2MTA0LC04Ljk3MzE0NWwtOC4yNTYxMDQsLTguMzQ3MDYxbDcuNjMwNjE1LDBsNy42MzIzMjQsMGwxMS42NTUyNzMsMTEuNzYxNDlsMTEuNjU1MjczLDExLjc2MDc0MmwtMTEuNjc3NDksMTEuNzM5MjU4bC0xMS42Nzc0OSwxMS43Mzg0OTVsLTguMDM1NjQ1LDBsLTguMDMzOTM2LDBsOC44NzgxNzQsLTguOTcyNDEybDAsMHoiIGZpbGwtb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLW9wYWNpdHk9Im51bGwiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjMDAwIiBmaWxsPSIjMDAwMDAwIi8+CiAgPHBhdGggc3Ryb2tlPSIjMDAwIiBpZD0ic3ZnXzI0IiBkPSJtNDMwLDE5NGw2Ny41LC03Nmw2Ny41LDc2bC02Ny41LDc2bC02Ny41LC03NnoiIHN0cm9rZS13aWR0aD0iNCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHhtbDpzcGFjZT0icHJlc2VydmUiIHRleHQtYW5jaG9yPSJsZWZ0IiBmb250LWZhbWlseT0iSGVsdmV0aWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgaWQ9InN2Z18yMSIgeT0iMjAwLjUiIHg9IjQ1NCIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiPnJlbmRlcigpPC90ZXh0PgogIDxwYXRoIGlkPSJzdmdfMjIiIGQ9Im02MDEuNjMzNjA2LDIwOC44MDkyMzVsOC44Nzk4MjIsLTguOTczMTQ1bC0xNy4xNjY2ODcsMGwtMTcuMTY2NzQ4LDBsMCwtNS41NTQ0MjhsMCwtNS41NTQ0MjhsMTYuOTY4NTA2LDBjOS4zMzQ0MTIsMCAxNi45NzAxNTQsLTAuMjgxMTI4IDE2Ljk3MDE1NCwtMC42MjUzNjZjMCwtMC4zNDQyMzggLTMuNzE1MzMyLC00LjM4MTg2NiAtOC4yNTYxMDQsLTguOTczMTQ1bC04LjI1NjEwNCwtOC4zNDcwNjFsNy42MzA2MTUsMGw3LjYzMjMyNCwwbDExLjY1NTI3MywxMS43NjE0NzVsMTEuNjU1MzM0LDExLjc2MDc1N2wtMTEuNjc3NTUxLDExLjczOTI0M2wtMTEuNjc3NDksMTEuNzM4NTI1bC04LjAzNTY0NSwwbC04LjAzMzkzNiwwbDguODc4MjM1LC04Ljk3MjQyN2wwLDB6IiBmaWxsLW9wYWNpdHk9Im51bGwiIHN0cm9rZS1vcGFjaXR5PSJudWxsIiBzdHJva2Utd2lkdGg9IjAiIHN0cm9rZT0iIzAwMCIgZmlsbD0iIzAwMDAwMCIvPgogIDxwYXRoIGlkPSJzdmdfMjMiIGQ9Im04MTEuMzI0NDYzLDEwNS45MDg0MzJjLTE4LjI2MzYxMSwtMTQuNjI2NDk1IC0zNy45MzI4LC0yNi4zNTE4NjggLTU0LjAyNzcxLC0yNy45MzM5NzVjLTAuODkyNTc4LC0wLjEwNjY1OSAtMS43ODUwMzQsLTAuMTU5OTg4IC0yLjgwNjk0NiwtMC4xODQ4NzVsLTEwNi4xNDEwNTIsMGMtMS43ODkyNDYsMCAtMy40NDkxNTgsMC41NTQ2MjYgLTQuNjAwMjgxLDEuNTUzNjY1Yy0xLjE0NjkxMiwwLjk3NzcwNyAtMS45MTQzNjgsMi4zNzEzODQgLTEuOTE0MzY4LDMuNzY4NjE2bDAsMjIyLjM4MDMyNWMwLDEuMzk3MjQ3IDAuNjM4MTIzLDIuNzQxMTUgMS45MTQzNjgsMy43NDM2ODNjMS4xNTExMjMsMC45OTkwODQgMi44MTEwMzUsMS41NTM3MTEgNC42MDAyODEsMS41NTM3MTFsMTkyLjA5OTk3NiwwYzEuNjU5OTczLDAgMy4zMTk4ODUsLTAuNTI2MTg0IDQuNDcxMDA4LC0xLjU1MzcxMWMxLjI3NjI0NSwtMS4wMDI1MzMgMS45MTQzNjgsLTIuMzQ2NDM2IDEuOTE0MzY4LC0zLjc0MzY4M2wwLC0xNDcuOTc4NjA3Yy0wLjM4MzYwNiwtMTcuMTg2MzEgLTE2LjYwMzY5OSwtMzUuODk3ODQyIC0zNS41MDk2NDQsLTUxLjYwNTE0OHptLTkuMDY3MTM5LDcuNTM3MjMxYzguNDI5MDE2LDYuNzc2Mzk4IDE2LjA5NDc4OCwxNC40NzAwNjIgMjEuNzEyNzY5LDIxLjg3NTc0OGMtNC45Nzk4NTgsLTEuNTgyMTA4IC0xMC4wODg5MjgsLTIuNzY2MDIyIC0xNC45NDM2NjUsLTMuNzE1Mjg2Yy0xMC42MDIwNTEsLTEuOTc2NzQ2IC0yMC45NDU0MzUsLTIuNzY5NTc3IC0yNy40NjAyMDUsLTMuMDgyNDQzYzAuMTI5MzMzLC0xLjE2MjU4MiAwLjEyOTMzMywtMi40NTMxNTYgMC4xMjkzMzMsLTMuODUwMzg4YzAsLTcuNTA4Nzg5IC0wLjY0MjMzNCwtMTguMjEwMjM2IC0zLjcwMzYxMywtMjcuNjQ1OTk2Yy0wLjEyOTMzMywtMC4wNzgyMTcgLTAuMTI5MzMzLC0wLjE1NjQzMyAtMC4xMjkzMzMsLTAuMjYzMDkyYzcuOTIwMjI3LDQuMzc2NTcyIDE2LjczMzAzMiwxMC4xNDY4MiAyNC4zOTQ3MTQsMTYuNjgxNDU4em0zMS42NzY2OTcsMTg2LjY5NTg0N2wtMTc5LjE5OTgyOSwwbDAsLTIxMS43MzIyNTRsOTkuODgwNzM3LDBsMCwwLjAyODQ0MmM0LjM0MTczNiwtMC4yMzgyMDUgOC4wNDk1NjEsMy4zMjA2NDggMTAuOTg1NzE4LDExLjQzNzM5M2MyLjU1MjQ5LDcuNzIyMTA3IDMuMTk0ODI0LDE3LjgxNTU5OCAzLjE5NDgyNCwyNC43OTgyMDNjMCw1LjExMjUxOCAtMC4yNTg1NDUsOC41NjQ3MTMgLTAuMjU4NTQ1LDguNTY0NzEzbC0wLjUwODkxMSw1LjYxMzgxNWw2Ljg5ODQzOCwwLjA4MTc3MmMwLDAgMTUuODM2MjQzLDAuMTMxNTQ2IDMxLjI4ODgxOCwzLjA1NDAwMWMxNC45NDc5OTgsMi42NjI5MTggMjYuNjk2OTYsNy45NjAzMTIgMjcuNzE4NzUsMTMuOTY4NzY1YzAsMC41MjYxODQgMCwxLjA1NTkyMyAwLDEuNTU3MjJsMCwxNDIuNjI3OTNsMCwweiIgZmlsbC1vcGFjaXR5PSJudWxsIiBzdHJva2Utb3BhY2l0eT0ibnVsbCIgc3Ryb2tlLXdpZHRoPSIwIiBzdHJva2U9IiMwMDAiIGZpbGw9IiMwMDAwMDAiLz4KIDwvZz4KPC9zdmc+" />
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Components as Tags</h1>
+            <div class="row">
+                <div class="col-sm-12">
+                <h2>JSX Syntax</h2>
+                <p>
+                    React JSX is transpiled to Javascript. This allows for mixing html and javascript syntax. 
+                </p>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sm-6">
                     <span>JSX:</span>
@@ -99,36 +136,13 @@
                     <div class="sourceCode" data-source="jsxTanslatedSyntaxSource"></div>
                 </div>
             </div>
-        </section>
-        <section class="container">
-            <h1>Component</h1>
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
                         <li>Defining a component allows you to use a variable as a JSX tag</li>
-                        <li>Components are structured like HTML by having children and properties</li>
-                        <li>A component is an Actor that receives messages, updates state, and sends messages</li>
-                    </ul>
-
-                </div>
-                <div class="col-sm-8">
-                    <div class="sourceCode" data-source="defineTagSource"></div>
-                </div>
-            </div>
-        </section>
-        <section class="container">
-            <h1>Render</h1>
-            <div class="row">
-                <div class="col-sm-4">
-                    <p>
-                        Render is called after the component's internal state changes.
-                        The virtual DOM is compared against the actual DOM to generate a DOM diff.
-                        This DOM diff is applied to the actual DOM to minimize redrawing.
-                    </p>
-                    <ul>
-                        <li>The "render" method returns a virtual DOM</li>
-                        <li>Returned virtual DOM must have one root element or be null to render nothing</li>
                         <li>Brackets ("{}") are used to evaluate javascript within the tags.</li>
+                        <li>The attributes of a tag are mapped to as props for the component state</li>
+                        <li>The contents are mapped to the props.children for the component state</li>
                     </ul>
                     <div class="result" id="defineRender"></div>
                 </div>
@@ -138,7 +152,7 @@
             </div>
         </section>
         <section class="container">
-            <h1>Properties</h1>
+            <h2>Properties</h2>
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
@@ -154,7 +168,7 @@
             </div>
         </section>
         <section class="container">
-            <h1>State &amp; Events</h1>
+            <h2>State &amp; Events</h2>
             <div class="row">
                 <div class="col-sm-4">
                     <ul>
