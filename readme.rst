@@ -1,8 +1,12 @@
 Crash Course for React.js
 =========================
 
+Goto: 
+https://zbyte64.github.io/reactjs-crashcourse
 
-1. Clone or download this respository
+Or:
+
+1. Download and Unpack: https://github.com/zbyte64/reactjs-crashcourse/archive/gh-pages.zip
 2. Open lesson1.html in your browser
 3. Enjoy
 
