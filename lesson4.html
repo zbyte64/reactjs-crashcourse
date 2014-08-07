@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Contracts</title>
+        <link href="lib/bootstrap.css" rel="stylesheet" />
+    </head>
+    <body>
+        <section class="container">
+            <h1>Contracts</h1>
+            <div class="row">
+                <div class="col-sm-12">
+                <p>
+                    Public facing functions can be considered a contract.
+                    When you define a function you are establishing a set of desired actions that other functions depend on remaining consistent.
+                    If you change a function that is called throughout the application it should maintain its contractual obligations (or else you will need to refactor all the calls made to te function).
+                    By establishing a contract the function can be more easily re-used and is a great tool for isolating complexities.
+                </p>
+                <p>Obligatory wikipedia link: <a href="https://en.wikipedia.org/wiki/Design_by_contract">Design by Contact</a></p>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Components as Contracts</h1>
+            <div class="row">
+                <div class="col-sm-12">
+                <p>
+                    Components work like statefull functions and can be designed in a contractual manner.
+                    In general components should only concern themselves with rendering the DOM and handling user interactions.
+                    If the results of those user interactions extend beyond the component itself then the handling should be done outside the component.
+                    This can be done through callbacks associated to the component (onChange, onClick, etc) or by putting an event on a channel.
+                    Not only does this keep our components lean but it makes it easier to unit test since our blocks of code are seperated by concerns.
+                </p>
+                </div>
+            </div>
+        </section>
+        <section class="container">
+            <h1>Components as Stories</h1>
+            <div class="row">
+                <div class="col-sm-12">
+                <p>
+                    Components (and programming in general) allow the user to <a href="https://en.wikipedia.org/wiki/Choose_Your_Own_Adventure">"choose your own adventure"</a>.
+                    At each event the component updates state and the story progresses.
+                    Wherever the user chooses to progress the story should be encapsulated in a method.
+                    Wherever the component chooses something to render based on the current story line should also be encapsulated in a method.
+                    The alternative to this is to attempt to pack more logic into the "render" method which is harder to test.
+                    By delegating functionality to component methods the component contract becomes more obvious and other developers can more quickly understand how the component progresses the story.
+                </p>
+                </div>
+            </div>
+        </section>
+        <div class="footer container">
+        <ul class="pagination">
+            <li><a href="lesson2.html">&laquo;</a></li>
+            <li><a href="lesson1.html">Lesson 1</a></li>
+            <li><a href="lesson2.html">Lesson 2</a></li>
+            <li><a href="lesson3.html">Lesson 3</a></li>
+            <li class="active"><a href="lesson4.html">Lesson 4</a></li>
+        </ul>
+        </div>
+    </body>
+</html>
